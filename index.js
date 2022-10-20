@@ -4,86 +4,146 @@ let blocksObj = {
     6:'', 7:'', 8:'',
 }
 
-let turn = 'X'
-let changeturn = ()=>{
-    if(turn == 'X'){
-        turn = 'O'
-    }
-    else{
-        turn = 'X'
-    }
-}
-let checkWinner = ()=>{
-
-    if(blocksObj[0] === blocksObj[1] && blocksObj[0] === blocksObj[2] && blocksObj[0]){
-       return true
-    }
-    else if(blocksObj[3] === blocksObj[4] && blocksObj[4] === blocksObj[5] && blocksObj[3]){
-        return true
-    }
-    else if(blocksObj[6] === blocksObj[7] && blocksObj[6] === blocksObj[8] && blocksObj[6]){
-        return true
-    }
-    else if(blocksObj[0] === blocksObj[3] && blocksObj[3] === blocksObj[6] && blocksObj[0]){
-        return true
-    }
-    else if(blocksObj[1] === blocksObj[4] && blocksObj[4] === blocksObj[7] && blocksObj[1]){
-        return true
-    }
-    else if(blocksObj[2] === blocksObj[5] && blocksObj[5] === blocksObj[8] && blocksObj[2]){
-        return true
-    }
-    else if(blocksObj[0] === blocksObj[4] && blocksObj[4] === blocksObj[8] && blocksObj[0]){
-        return true
-    }
-    else if(blocksObj[2] === blocksObj[4] && blocksObj[4] === blocksObj[6] && blocksObj[2]){
-        return true
-    }
-    else{
-        return false
-    }
-    
-}
-let blocks = document.querySelectorAll('.block')
-
-blocks.forEach((block) => {
-    block.addEventListener('click', ()=>{
-        block.innerHTML = turn
-        blocksObj[block.id] = turn
-        if(checkWinner()){
-            document.querySelector('p').innerText = `${turn} is the Winner!`
+// Game Flow >>> getTurn // Change Turn // checkwinner (MODULE PATTERN)
+const gameFlow = (() => {
+    let turn = 'X'
+    const getTurn = () => {
+        return turn
+    };
+    const changeturn = () => {
+        if(turn === 'X'){
+            turn = 'O'
         }
         else{
-        changeturn()
-        document.querySelector('p').innerText = `Player's ${turn} turn`
+            turn = 'X'
         }
-        
-    }, {once:true})
-})
+        textDisplay.playerTurnText()
 
-document.querySelector('p').innerText = `Player's ${turn} turn`
+    };
+    const checkwinner = () =>{
+        if(blocksObj[0] === blocksObj[1] && blocksObj[0] === blocksObj[2] && blocksObj[0]){
+            textDisplay.winnerText()
+            return true
+         }
+         else if(blocksObj[3] === blocksObj[4] && blocksObj[4] === blocksObj[5] && blocksObj[3]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[6] === blocksObj[7] && blocksObj[6] === blocksObj[8] && blocksObj[6]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[0] === blocksObj[3] && blocksObj[3] === blocksObj[6] && blocksObj[0]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[1] === blocksObj[4] && blocksObj[4] === blocksObj[7] && blocksObj[1]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[2] === blocksObj[5] && blocksObj[5] === blocksObj[8] && blocksObj[2]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[0] === blocksObj[4] && blocksObj[4] === blocksObj[8] && blocksObj[0]){
+            textDisplay.winnerText()
+             return true
+         }
+         else if(blocksObj[2] === blocksObj[4] && blocksObj[4] === blocksObj[6] && blocksObj[2]){
+            textDisplay.winnerText()
+             return true
+         }
+         else{
+             return false
+         }
+    };
+
+    return {
+      changeturn,
+      checkwinner,
+      getTurn,
+    };
+  })()
+
+  // Text Display (MODULE PATTERN)
+  const textDisplay = (() => {
+
+    const playerTurnText = () => {
+        document.querySelector('p').innerText = `Player's ${gameFlow.getTurn()} turn`
+
+        
+        
+    };
+    const winnerText = () => {
+
+        document.querySelector('p').innerText = `${gameFlow.getTurn()} is the Winner!`
+
+    };
+
+
+    return {
+      winnerText,
+      playerTurnText,
+    };
+  })()
+
+  // BUTTONS
+  const displayBlocks = (() => {
+
+    let blocks = document.querySelectorAll('.block')
+
+
+    // CLEAN THE BLOCKS OBJECT AND THE BLOCK DISPLAY
+
+    const clean = () => {
+        for(let block in blocksObj){
+            blocksObj[block] = ''
+        }
+        blocks.forEach(block => block.innerText = '')
+
+        
+        
+    };
+    const active = () => {
+        //set first turn display
+        textDisplay.playerTurnText()
+        
+        // Active display blocks
+        blocks.forEach((block) => {
+            block.addEventListener('click', ()=>{
+
+                block.innerHTML = gameFlow.getTurn()
+                blocksObj[block.id] = gameFlow.getTurn()
+
+                if(!gameFlow.checkwinner()){
+                    gameFlow.changeturn()
+                }
+                
+            }, {once:true})})
+
+    };
+
+
+    return {
+      clean,
+      active,
+      
+    };
+  })()
+
+
+
+
+// On Load Active blocks
+document.addEventListener('load', displayBlocks.active())
 
 // RESET BUTTON
 document.querySelector('button').addEventListener('click', ()=>{
-    document.querySelector('p').innerText = `Player's ${turn} turn`
 
-    for(let block in blocksObj){
-        blocksObj[block] = ''
-    }
-    blocks.forEach(block => block.innerText = '')
-    blocks.forEach((block) => {
-        block.addEventListener('click', ()=>{
-            block.innerHTML = turn
-            blocksObj[block.id] = turn
-            if(checkWinner()){
-                document.querySelector('p').innerText = `${turn} is the Winner!`
-            }
-            else{
-            changeturn()
-            document.querySelector('p').innerText = `Player's ${turn} turn`
-            }
-            
-        }, {once:true})
-    })
+    displayBlocks.clean()
+
+    // Active Blocks again
+    displayBlocks.active()
+
     
 })
