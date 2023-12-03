@@ -69,14 +69,14 @@ const gameFlow = (() => {
   const textDisplay = (() => {
 
     const playerTurnText = () => {
-        document.querySelector('p').innerText = `Player's ${gameFlow.getTurn()} turn`
+        document.querySelector('p').innerText = `Player's ${gameFlow.getTurn() == "X" ? "Flamengo" : "Real Madrid"} turn`
 
         
         
     };
     const winnerText = () => {
 
-        document.querySelector('p').innerText = `${gameFlow.getTurn()} is the Winner!`
+        document.querySelector('p').innerText = `${gameFlow.getTurn() == "X" ? "Flamengo" : "Real Madrid"} is the Winner!`
 
     };
 
@@ -112,7 +112,17 @@ const gameFlow = (() => {
         blocks.forEach((block) => {
             block.addEventListener('click', ()=>{
 
-                block.innerHTML = gameFlow.getTurn()
+                //block.innerHTML = gameFlow.getTurn()
+                if(gameFlow.getTurn() == 'X'){
+                    const flamengo = document.createElement("img");
+                    flamengo.src = "https://th.bing.com/th/id/R.4390b2f62becac067c8387fd0adc96dc?rik=rI2s0RR%2bYE1eEQ&pid=ImgRaw&r=0";
+                    block.appendChild(flamengo);
+                }
+                else{
+                    const realmadrid = document.createElement("img");
+                    realmadrid.src = "https://th.bing.com/th/id/R.c741810f9c33cf1dcc57c99d72e0a88f?rik=cpqlbe4biPOuAA&riu=http%3a%2f%2fwww.freelogovectors.net%2fwp-content%2fuploads%2f2018%2f03%2freal_madrid_cub_de_futbol-logo.png&ehk=0leBxEk7hblAGXb64NVnUz83tfO1n%2bVtT9C3rBadqUM%3d&risl=&pid=ImgRaw&r=0";
+                    block.appendChild(realmadrid);
+                }
                 blocksObj[block.id] = gameFlow.getTurn()
 
                 if(!gameFlow.checkwinner()){
